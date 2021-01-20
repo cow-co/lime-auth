@@ -1,0 +1,22 @@
+language: java
+jdk:
+  - oraclejdk11
+  - openjdk11
+
+before_install:
+  - chmod +x mvnw
+
+branches:
+  only:
+    - master
+    - develop
+
+stages:
+  - install
+  - test
+  - name: build
+    if: branch = master
+
+install: ./mvnw install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
+test: ./mvnw test -B
+build: ./mvnw -Pprod package -B
