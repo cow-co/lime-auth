@@ -7,6 +7,7 @@ jobs:
           password: $DOCKERHUB_PASSWORD
     steps:
       - checkout
+      - run: chmod +x mvnw
       - run: ./mvnw install -B
   test:
     docker:
@@ -16,10 +17,13 @@ jobs:
           password: $DOCKERHUB_PASSWORD
     steps:
       - checkout
+      - run: chmod +x mvnw
       - run: ./mvnw test -B
 workflows:
   version: 2
   build_and_test:
     jobs:
       - test
-      - build
+      - build:
+          requires:
+            - test
