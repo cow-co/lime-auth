@@ -35,10 +35,10 @@ jobs:
           command: |
             echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
             docker build -t cybersecmoo1/lime-auth:0.0.$CIRCLE_BUILD_NUM .
-            docker tag cybersecmoo1/lime-auth:0.0.$CIRCLE_BUILD_NUM registry.heroku.com/$HEROKU_APP/web
+            docker tag cybersecmoo1/lime-auth:0.0.$CIRCLE_BUILD_NUM registry.heroku.com/lime-auth/web
             docker push cybersecmoo1/lime-auth:0.0.$CIRCLE_BUILD_NUM
-            docker push registry.heroku.com/$HEROKU_APP/web
-            heroku container:release web --app $HEROKU_APP
+            docker push registry.heroku.com/lime-auth/web
+            heroku container:release web --app lime-auth
       - run:
           name: Deploy to Heroku
           command: |
