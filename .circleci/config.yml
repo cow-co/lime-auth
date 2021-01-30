@@ -7,7 +7,7 @@ jobs:
           password: $DOCKERHUB_PASSWORD
     steps:
       - checkout
-      - run: /mvnw install -B
+      - run: ./mvnw install -B
   test:
     docker:
       - image: circleci/openjdk:11
@@ -16,7 +16,7 @@ jobs:
           password: $DOCKERHUB_PASSWORD
     steps:
       - checkout
-      - run: /mvnw test -B
+      - run: ./mvnw test -B
 workflows:
   version: 2
   build_and_test:
