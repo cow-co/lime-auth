@@ -14,9 +14,9 @@ jobs:
         auth:
           username: $DOCKERHUB_USERNAME
           password: $DOCKERHUB_PASSWORD
-      steps:
-        - checkout
-        - run: /mvnw test -B
+    steps:
+      - checkout
+      - run: /mvnw test -B
 workflows:
   version: 2
   build_and_test:
