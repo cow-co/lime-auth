@@ -1,0 +1,29 @@
+jobs:
+  build:
+    docker:
+      - image: circleci/openjdk:11
+        auth:
+          username: $DOCKERHUB_USERNAME
+          password: $DOCKERHUB_PASSWORD
+    steps:
+      - checkout
+      - run:
+          name: Build
+          command: /mvnw install -B
+  test:
+    docker:
+      - image: circleci/openjdk:11
+        auth:
+          username: $DOCKERHUB_USERNAME
+          password: $DOCKERHUB_PASSWORD
+      steps:
+        - checkout
+        - run:
+            name: Test
+            command: /mvnw test -B
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - test
+      - build
