@@ -8,7 +8,11 @@ jobs:
     steps:
       - checkout
       - run: chmod +x mvnw
-      - run: ./mvnw install -B
+      - run: ./mvnw package -B
+      - persist_to_workspace:
+          root: target
+          paths:
+            - lime-auth-0.0.1.jar
   test:
     docker:
       - image: circleci/openjdk:11
@@ -27,6 +31,8 @@ jobs:
           username: $DOCKERHUB_USERNAME
           password: $DOCKERHUB_PASSWORD
     steps:
+      - attach_workspace:
+          at: bin
       - checkout
       - setup_remote_docker:
           version: 19.03.13
