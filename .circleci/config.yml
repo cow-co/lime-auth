@@ -1,18 +1,4 @@
 jobs:
-  build:
-    docker:
-      - image: circleci/openjdk:11
-        auth:
-          username: $DOCKERHUB_USERNAME
-          password: $DOCKERHUB_PASSWORD
-    steps:
-      - checkout
-      - run: chmod +x mvnw
-      - run: ./mvnw package -B
-      - persist_to_workspace:
-          root: target
-          paths:
-            - lime-auth-0.0.1.jar
   test:
     docker:
       - image: circleci/openjdk:11
@@ -31,11 +17,11 @@ jobs:
           username: $DOCKERHUB_USERNAME
           password: $DOCKERHUB_PASSWORD
     steps:
-      - attach_workspace:
-          at: bin
       - checkout
       - setup_remote_docker:
           version: 19.03.13
+      - run: chmod +x mvnw
+      - run: ./mvnw package -B
       - run:
           name: Build and push docker image
           command: |
@@ -57,12 +43,9 @@ workflows:
   build_and_test:
     jobs:
       - test
-      - build:
-          requires:
-            - test
       - deploy:
           requires:
-            - build
+            - test
           filters:
             branches:
               only:
