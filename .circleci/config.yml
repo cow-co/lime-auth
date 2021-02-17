@@ -31,10 +31,8 @@ jobs:
             docker push cybersecmoo1/lime-auth:0.0.$CIRCLE_BUILD_NUM
       - heroku/install
       - heroku/check-authentication
-      - heroku/push-docker-image:
-          api-key: $HEROKU_TOKEN
-      - heroku/release-docker-image:
-          api-key: $HEROKU_TOKEN
+      - heroku/push-docker-image
+      - heroku/release-docker-image
 orbs:
   heroku: circleci/heroku@1.2.5
 version: 2.1
