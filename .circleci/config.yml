@@ -48,6 +48,7 @@ workflows:
           filters:
             branches:
               only:
+                - feature/basic-dockerise
                 - develop
                 - main
 
