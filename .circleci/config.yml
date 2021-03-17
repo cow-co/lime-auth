@@ -9,6 +9,11 @@ jobs:
       - checkout
       - run: chmod +x mvnw
       - run: ./mvnw test -B
+      - store_test_results:
+          path: ./target/surefire-reports
+      - store_artifacts:
+          path: ./target/dependency-check-report.html
+          destination: dep-check-report.html
 
   deploy:
     docker:
