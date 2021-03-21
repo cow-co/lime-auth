@@ -1,4 +1,4 @@
-FROM openjdk:11
+FROM openjdk:14
 RUN groupadd spring
 RUN useradd -g spring spring
 USER spring:spring
