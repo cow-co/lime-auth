@@ -20,4 +20,19 @@ public class User {
     private String resetToken;
     private String twoFAToken;
     private String oAuthToken;
+
+
+    public User(String email, String hashedPassword, String salt) {
+        this.email = email;
+        this.hashedPassword = hashedPassword;
+        this.salt = salt;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 }
