@@ -35,4 +35,28 @@ public class UserRepositoryTests {
         User found = repository.findByEmail("user.getEmail()");
         assertThat(found).isNull();
     }
+
+    @Test
+    public void testDeletesUser() {
+        User user = new User("email", "pass", "salty");
+        entityManager.persist(user);
+        entityManager.flush();
+
+        User found = repository.findByEmail(user.getEmail());
+        assertThat(found.getEmail()).isEqualTo(user.getEmail());
+        repository.delete(found);
+        found = repository.findByEmail(user.getEmail());
+        assertThat(found).isNull();
+    }
+
+    @Test
+    public void testSavesUser() {
+        User user = new User("email", "pass", "salty");
+        User found = repository.findByEmail(user.getEmail());
+        assertThat(found).isNull();
+        
+        repository.save(user);
+        found = repository.findByEmail(user.getEmail());
+        assertThat(found.getEmail()).isEqualTo(user.getEmail());
+    }
 }
