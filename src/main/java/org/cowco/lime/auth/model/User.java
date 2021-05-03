@@ -19,8 +19,6 @@ public class User {
     private String email;
     @NotBlank(message = "Password is a required field")
     private String hashedPassword;
-    private String salt;    // There is also a pepper value, stored in env vars and read in to the repository class. 
-                            // This means an attacker will require access to both the DB and the app container (or the CD platform)
     private String registerToken;
     private String loginToken;
     private boolean isActive;   // Default this to false; set to true once registration is confirmed. Can be set back to false if the user is banned
@@ -29,10 +27,9 @@ public class User {
     private String oAuthToken;
 
 
-    public User(String email, String hashedPassword, String salt) {
+    public User(String email, String hashedPassword) {
         this.email = email;
         this.hashedPassword = hashedPassword;
-        this.salt = salt;
     }
 
     public String getEmail() {

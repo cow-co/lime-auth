@@ -10,6 +10,7 @@ import org.cowco.lime.auth.model.User;
 import org.cowco.lime.auth.repository.UserRepository;
 import org.cowco.lime.auth.requestformats.UserCreationRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +29,8 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
     private Argon2PasswordEncoder passwordEncoder;
+    @Value("${ARGON_PEPPER}")
+    private String pepper;
 
     public UserServiceImpl() {
         calculateArgon2Settings();
@@ -49,37 +52,36 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void addUser(UserCreationRequest userCreationRequest) {
+    public List<String> addUser(UserCreationRequest userCreationRequest) {
         List<String> validationErrors = verifyUserCreationRequest(userCreationRequest);
 
-        if(validationErrors.size() > 0) {
-            // TODO Return the errors back out to the controller
+        if(validationErrors.size() == 0) {
+            String passwordAndPepper = userCreationRequest.getPassword().concat(pepper);
+            String hashedPassword = passwordEncoder.encode(passwordAndPepper);  // NOTE The backend for this does not parallelise as well as hash-cracking systems do. 
+                                                                                // So there is attacker/defender asymmetry there.
+            User user = new User(userCreationRequest.getEmail(), hashedPassword);
+            userRepository.save(user);
         }
 
-        // NOTE The backend for this does not parallelise as well as hash-cracking systems do. So there is attacker/defender asymmetry there.
-        String hashedPassword = passwordEncoder.encode(userCreationRequest.getPassword());
-        
-        // TODO Create the user
-
-        userRepository.save(user);
+        return validationErrors;
     }
 
     @Override
     public User getUserById(long id) {
-        return userRepository.findOne(id);
+        return userRepository.findById(id).orElseThrow();
     }
 
     @Override
     public User getUserByEmail(String email) {
-        return userRepository.findOneByEmail(email);
+        return userRepository.findByEmail(email);
     }
 
     @Override
     public void deleteUserById(long id) {
-        userRepository.delete(id);
+        userRepository.deleteById(id);
     }
 
-    private List<String> verifyUserCreationRequest(UserCreationRequest request) throws ValidationException {
+    private List<String> verifyUserCreationRequest(UserCreationRequest request) {
         List<String> errors = new ArrayList<>();
         String password = request.getPassword();
         Pattern passwordValidationPattern = Pattern.compile(PASSWORD_VALIDATION_REGEX);

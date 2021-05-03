@@ -18,7 +18,7 @@ public class UserRepositoryTests {
 
     @Test
     public void testFindsUserByEmail() {
-        User user = new User("email", "pass", "salty");
+        User user = new User("email@email.com", "pass");
         entityManager.persist(user);
         entityManager.flush();
 
@@ -28,7 +28,7 @@ public class UserRepositoryTests {
 
     @Test
     public void testFailsToFindNonExistentUserByEmail() {
-        User user = new User("email", "pass", "salty");
+        User user = new User("email@email.com", "pass");
         entityManager.persist(user);
         entityManager.flush();
 
@@ -38,7 +38,7 @@ public class UserRepositoryTests {
 
     @Test
     public void testDeletesUser() {
-        User user = new User("email", "pass", "salty");
+        User user = new User("email@email.com", "pass");
         entityManager.persist(user);
         entityManager.flush();
 
@@ -51,7 +51,7 @@ public class UserRepositoryTests {
 
     @Test
     public void testSavesUser() {
-        User user = new User("email", "pass", "salty");
+        User user = new User("email@email.com", "pass");
         User found = repository.findByEmail(user.getEmail());
         assertThat(found).isNull();
         
