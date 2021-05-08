@@ -1,11 +1,16 @@
 package org.cowco.lime.auth.model;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.Valid;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 @Entity
 public class User {
@@ -14,8 +19,10 @@ public class User {
     private long id;
 
     // Uses a simple email address validation regex
-    @NotBlank(message = "Email is a mandatory field")
-    @Pattern(regexp = "^(.+)@(.+)$")
+    @NotEmpty
+    @Email
+    @Column(unique = true)
+    @Size(max = 255)
     private String email;
     @NotBlank(message = "Password is a required field")
     private String hashedPassword;
@@ -27,16 +34,12 @@ public class User {
     private String oAuthToken;
 
 
-    public User(String email, String hashedPassword) {
+    public User(@Valid String email, @Valid String hashedPassword) {
         this.email = email;
         this.hashedPassword = hashedPassword;
     }
 
     public String getEmail() {
         return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 }
