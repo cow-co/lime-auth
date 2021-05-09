@@ -72,4 +72,34 @@ public class UserControllerTests {
         UserCreationRequest userCreationRequest = new UserCreationRequest("email@email.com", "Sh0!rt", "Sh0!rt");
         mvc.perform(put("/api/users").contentType(MediaType.APPLICATION_JSON).content(JsonUtil.toJson(userCreationRequest))).andExpect(status().isBadRequest());
     }
+
+    @Test
+    public void testDoesNotCreateUserWithNoNumbersInPassword() throws Exception {
+        UserCreationRequest userCreationRequest = new UserCreationRequest("email@email.com", "SomeSuperDuperLongPassword!", "SomeSuperDuperLongPassword!");
+        mvc.perform(put("/api/users").contentType(MediaType.APPLICATION_JSON).content(JsonUtil.toJson(userCreationRequest))).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testDoesNotCreateUserWithNoUpperCaseInPassword() throws Exception {
+        UserCreationRequest userCreationRequest = new UserCreationRequest("email@email.com", "somesuperduperl0ngpassword!", "somesuperduperl0ngpassword!");
+        mvc.perform(put("/api/users").contentType(MediaType.APPLICATION_JSON).content(JsonUtil.toJson(userCreationRequest))).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testDoesNotCreateUserWithNoLowerCaseInPassword() throws Exception {
+        UserCreationRequest userCreationRequest = new UserCreationRequest("email@email.com", "SOMESUPERDUPERL0NGPASSWORD!", "SOMESUPERDUPERL0NGPASSWORD!");
+        mvc.perform(put("/api/users").contentType(MediaType.APPLICATION_JSON).content(JsonUtil.toJson(userCreationRequest))).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testDoesNotCreateUserWithNoSymbolsInPassword() throws Exception {
+        UserCreationRequest userCreationRequest = new UserCreationRequest("email@email.com", "SomeSuperDuperL0ngPassword", "SomeSuperDuperL0ngPassword");
+        mvc.perform(put("/api/users").contentType(MediaType.APPLICATION_JSON).content(JsonUtil.toJson(userCreationRequest))).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testDoesNotCreateUserWithNonMatchingConfirmation() throws Exception {
+        UserCreationRequest userCreationRequest = new UserCreationRequest("email@email.com", "SomeSuperDuperL0ngPassword!", "SomeSuperDuperL1ngPassword!");
+        mvc.perform(put("/api/users").contentType(MediaType.APPLICATION_JSON).content(JsonUtil.toJson(userCreationRequest))).andExpect(status().isBadRequest());
+    }
 }

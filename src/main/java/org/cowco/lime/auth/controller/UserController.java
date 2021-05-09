@@ -58,12 +58,19 @@ public class UserController {
 
     @PutMapping
     public ResponseEntity<String> createUser(@Valid @RequestBody UserCreationRequest userCreationRequest) {
-        String passwordAndPepper = userCreationRequest.getPassword().concat(pepper);
-        String hashedPassword = passwordEncoder.encode(passwordAndPepper);  // NOTE The backend for this does not parallelise as well as hash-cracking systems do. 
-                                                                            // So there is attacker/defender asymmetry there.
-        User user = new User(userCreationRequest.getEmail(), hashedPassword);
-        userRepository.save(user);
+        ResponseEntity<String> response;
 
-        return ResponseEntity.ok("User Successfully Created");
+        if(userCreationRequest.getPassword().equals(userCreationRequest.getPasswordConfirmation())) {
+            String passwordAndPepper = userCreationRequest.getPassword().concat(pepper);
+            String hashedPassword = passwordEncoder.encode(passwordAndPepper);  // NOTE The backend for this does not parallelise as well as hash-cracking systems do. 
+                                                                                // So there is attacker/defender asymmetry there.
+            User user = new User(userCreationRequest.getEmail(), hashedPassword);
+            userRepository.save(user);
+            response = ResponseEntity.ok("User Successfully Created");
+        } else {
+            response = ResponseEntity.badRequest().body("Password confirmation must match");
+        }
+
+        return response;
     }
 }
