@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -79,7 +80,7 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<UserResponse> getUser(long id) {
+    public ResponseEntity<UserResponse> getUser(@RequestParam long id) {
         ResponseEntity<UserResponse> response;
         Optional<User> user = userRepository.findById(id);
         UserResponse data = new UserResponse(user.orElseThrow());

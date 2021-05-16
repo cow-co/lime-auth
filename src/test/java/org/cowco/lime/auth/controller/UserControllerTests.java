@@ -27,9 +27,17 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.hamcrest.core.StringContains.containsString;
+
+import java.util.NoSuchElementException;
+import java.util.Optional;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
@@ -101,5 +109,17 @@ public class UserControllerTests {
     public void testDoesNotCreateUserWithNonMatchingConfirmation() throws Exception {
         UserCreationRequest userCreationRequest = new UserCreationRequest("email@email.com", "SomeSuperDuperL0ngPassword!", "SomeSuperDuperL1ngPassword!");
         mvc.perform(put("/api/users").contentType(MediaType.APPLICATION_JSON).content(JsonUtil.toJson(userCreationRequest))).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testFindsExistingUser() throws Exception {
+        given(repository.findById(any())).willReturn(Optional.of(new User("email@email.com", "hash")));
+        mvc.perform(get("/api/users").param("id", "1")).andExpect(status().isOk()).andExpect(content().string(containsString("email@email.com")));
+    }
+
+    @Test
+    public void testDoesNotFindNonexistentUser() throws Exception {
+        given(repository.findById(any())).willReturn(Optional.empty());
+        mvc.perform(get("/api/users").param("id", "1")).andExpect(result -> assertTrue(result.getResolvedException() instanceof NoSuchElementException));
     }
 }
