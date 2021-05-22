@@ -50,12 +50,9 @@ public class UserRepositoryTests {
 
     @Test
     public void testSavesUser() {
-        User user = new User("email@email.com", "pass");
-        User found = repository.findByEmail(user.getEmail()).orElseThrow();
-        assertThat(found).isNull();
-        
+        User user = new User("email@email.com", "pass");        
         repository.save(user);
-        found = repository.findByEmail(user.getEmail()).orElseThrow();
+        User found = repository.findByEmail(user.getEmail()).orElseThrow();
         assertThat(found.getEmail()).isEqualTo(user.getEmail());
     }
 }

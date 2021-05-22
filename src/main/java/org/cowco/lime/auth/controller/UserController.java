@@ -80,9 +80,17 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<UserResponse> getUser(@RequestParam long id) {
+    public ResponseEntity<UserResponse> getUser(@RequestParam(required = false) String id, @RequestParam(required = false) String email) {
         ResponseEntity<UserResponse> response;
-        Optional<User> user = userRepository.findById(id);
+        Optional<User> user = Optional.empty();
+        
+        if(id != null && !id.isEmpty()) {
+            long idNum = Long.parseLong(id);
+            user = userRepository.findById(idNum);
+        } else if(email != null && !email.isEmpty()) {
+            user = userRepository.findByEmail(email);
+        }
+        
         UserResponse data = new UserResponse(user.orElseThrow());
         response = ResponseEntity.ok(data);
         return response;

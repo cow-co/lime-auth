@@ -112,14 +112,14 @@ public class UserControllerTests {
     }
 
     @Test
-    public void testFindsExistingUser() throws Exception {
+    public void testFindsExistingUserById() throws Exception {
         given(repository.findById(any())).willReturn(Optional.of(new User("email@email.com", "hash")));
         mvc.perform(get("/api/users").param("id", "1")).andExpect(status().isOk()).andExpect(content().string(containsString("email@email.com")));
     }
 
     @Test
-    public void testDoesNotFindNonexistentUser() throws Exception {
-        given(repository.findById(any())).willReturn(Optional.empty());
-        mvc.perform(get("/api/users").param("id", "1")).andExpect(result -> assertTrue(result.getResolvedException() instanceof NoSuchElementException));
+    public void testFindsExistingUserByEmail() throws Exception {
+        given(repository.findByEmail(any())).willReturn(Optional.of(new User("email@email.com", "hash")));
+        mvc.perform(get("/api/users").param("email", "email@email.com")).andExpect(status().isOk()).andExpect(content().string(containsString("email@email.com")));
     }
 }
