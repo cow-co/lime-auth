@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import static org.assertj.core.api.Assertions.*;
 
+import java.util.NoSuchElementException;
+
 @DataJpaTest
 public class UserRepositoryTests {
     @Autowired
@@ -22,7 +24,7 @@ public class UserRepositoryTests {
         entityManager.persist(user);
         entityManager.flush();
 
-        User found = repository.findByEmail(user.getEmail());
+        User found = repository.findByEmail(user.getEmail()).orElseThrow();
         assertThat(found.getEmail()).isEqualTo(user.getEmail());
     }
 
@@ -31,9 +33,7 @@ public class UserRepositoryTests {
         User user = new User("email@email.com", "pass");
         entityManager.persist(user);
         entityManager.flush();
-
-        User found = repository.findByEmail("user.getEmail()");
-        assertThat(found).isNull();
+        assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(() -> repository.findByEmail("user.getEmail()").orElseThrow());
     }
 
     @Test
@@ -42,21 +42,17 @@ public class UserRepositoryTests {
         entityManager.persist(user);
         entityManager.flush();
 
-        User found = repository.findByEmail(user.getEmail());
+        User found = repository.findByEmail(user.getEmail()).orElseThrow();
         assertThat(found.getEmail()).isEqualTo(user.getEmail());
         repository.delete(found);
-        found = repository.findByEmail(user.getEmail());
-        assertThat(found).isNull();
+        assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(() -> repository.findByEmail(user.getEmail()).orElseThrow());
     }
 
     @Test
     public void testSavesUser() {
-        User user = new User("email@email.com", "pass");
-        User found = repository.findByEmail(user.getEmail());
-        assertThat(found).isNull();
-        
+        User user = new User("email@email.com", "pass");        
         repository.save(user);
-        found = repository.findByEmail(user.getEmail());
+        User found = repository.findByEmail(user.getEmail()).orElseThrow();
         assertThat(found.getEmail()).isEqualTo(user.getEmail());
     }
 }

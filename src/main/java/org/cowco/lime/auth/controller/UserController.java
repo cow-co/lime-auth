@@ -1,17 +1,22 @@
 package org.cowco.lime.auth.controller;
 
+import java.util.Optional;
+
 import javax.validation.Valid;
 
 import org.cowco.lime.auth.model.User;
 import org.cowco.lime.auth.repository.UserRepository;
 import org.cowco.lime.auth.requestformats.UserCreationRequest;
+import org.cowco.lime.auth.responseformats.UserResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -71,6 +76,23 @@ public class UserController {
             response = ResponseEntity.badRequest().body("Password confirmation must match");
         }
 
+        return response;
+    }
+
+    @GetMapping
+    public ResponseEntity<UserResponse> getUser(@RequestParam(required = false) String id, @RequestParam(required = false) String email) {
+        ResponseEntity<UserResponse> response;
+        Optional<User> user = Optional.empty();
+        
+        if(id != null && !id.isEmpty()) {
+            long idNum = Long.parseLong(id);
+            user = userRepository.findById(idNum);
+        } else if(email != null && !email.isEmpty()) {
+            user = userRepository.findByEmail(email);
+        }
+        
+        UserResponse data = new UserResponse(user.orElseThrow());
+        response = ResponseEntity.ok(data);
         return response;
     }
 }
